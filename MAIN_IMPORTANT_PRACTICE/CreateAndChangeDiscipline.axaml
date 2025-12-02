@@ -10,7 +10,6 @@
 	<TextBlock Text="😎Создание/Изменение дисциплины😎" FontSize="40" HorizontalAlignment="Center"/>
 
 	<Grid Margin="35 30 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
-		<!-- Первая колонка -->
 		<StackPanel Grid.Column="0" Margin="0 0 40 0" HorizontalAlignment="Center">
 			<Grid RowDefinitions="Auto, Auto, Auto, Auto">
 				<TextBlock Grid.Row="0" Text="Код:" HorizontalAlignment="Center"/>
@@ -26,7 +25,6 @@
 			</Grid>
 		</StackPanel>
 
-		<!-- Вторая колонка -->
 		<StackPanel Grid.Column="1" Margin="40 0 0 0" HorizontalAlignment="Center">
 			<Grid RowDefinitions="Auto, Auto, Auto, Auto">
 				<TextBlock Grid.Row="0" Text="Название:" HorizontalAlignment="Center"/>

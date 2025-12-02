@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace MAIN_IMPORTANT_PRACTICE;
 
-public partial class DisciplinesControl_AdminAndDepartment : UserControl
+public partial class SeeDisciplines : UserControl
 {
     private List<Дисциплина> allDisciplines = new List<Дисциплина>();
 
-    public DisciplinesControl_AdminAndDepartment()
+    public SeeDisciplines()
     {
         InitializeComponent();
         LoadAllDisciplines();
@@ -45,31 +45,5 @@ public partial class DisciplinesControl_AdminAndDepartment : UserControl
             .ToList();
 
         DisciplineControlDataGrid.ItemsSource = filteredDisciplines;
-    }
-
-    private async void AddButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        LoginVariableData.selectedDisciplineInMainWindow = null;
-
-        var parent = this.VisualRoot as Window;
-        var createAndChangeDiscipline = new CreateAndChangeDiscipline();
-        await createAndChangeDiscipline.ShowDialog(parent);
-    }
-
-    private async void DisciplineControlDataGrid_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
-    {
-        // забираем кликнутую дисциплину
-        var selectedDiscipline = DisciplineControlDataGrid.SelectedItem as Дисциплина;
-        if (selectedDiscipline == null) return;
-
-        // записываем Discipline
-        LoginVariableData.selectedDisciplineInMainWindow = selectedDiscipline;
-
-        var parent = this.VisualRoot as Window;
-        if (parent == null) return;
-        var createAndChangeDiscipline = new CreateAndChangeDiscipline();
-        await createAndChangeDiscipline.ShowDialog(parent);
-
-        LoadAllDisciplines();
     }
 }

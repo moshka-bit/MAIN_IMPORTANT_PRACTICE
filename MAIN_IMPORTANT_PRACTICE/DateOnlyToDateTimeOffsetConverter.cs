@@ -11,19 +11,17 @@ public class DateOnlyToDateTimeOffsetConverter : IValueConverter
     {
         if (value is DateOnly dateOnly)
         {
-            // Преобразуем DateOnly в DateTime, затем в DateTimeOffset
             DateTime dateTime = dateOnly.ToDateTime(TimeOnly.MinValue);
             return new DateTimeOffset(dateTime);
         }
 
-        return null; // Возвращаем null для пустого значения
+        return null;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is DateTimeOffset dateTimeOffset)
         {
-            // Преобразуем DateTimeOffset в DateTime, затем в DateOnly
             DateTime dateTime = dateTimeOffset.DateTime;
             return DateOnly.FromDateTime(dateTime);
         }

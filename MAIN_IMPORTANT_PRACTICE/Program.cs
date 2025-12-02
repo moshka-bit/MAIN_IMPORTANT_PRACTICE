@@ -12,7 +12,6 @@ namespace MAIN_IMPORTANT_PRACTICE
         [STAThread]
         public static void Main(string[] args)
         {
-            // Инициализация кодировки ДО построения приложения
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             BuildAvaloniaApp()

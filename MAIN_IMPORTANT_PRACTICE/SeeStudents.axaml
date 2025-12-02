@@ -3,9 +3,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MAIN_IMPORTANT_PRACTICE.StudentControl_CRUD_">
+             x:Class="MAIN_IMPORTANT_PRACTICE.SeeStudents">
 
- <Grid RowDefinitions="Auto,*,Auto">
+<Grid RowDefinitions="Auto,*,Auto">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
             <TextBox x:Name="FilterTextBox" 
                      Width="200" 
@@ -14,7 +14,7 @@
                      MaxLength="50"/>
         </StackPanel>
 
-        <DataGrid Name="StudentControlDataGrid" Grid.Row="1" IsReadOnly="True" DoubleTapped="StudentControlDataGrid_DoubleTapped">
+        <DataGrid Name="StudentControlDataGrid" Grid.Row="1" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding ТабНомер}" Header="Рег.Номер"/>
                 <DataGridTextColumn Binding="{Binding Номер}" Header="Номер"/>
@@ -25,11 +25,6 @@
         </DataGrid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
-            <Button x:Name="AddButton" 
-                    Content="Добавить" 
-                    Width="83" 
-                    Height="30"
-                    Click="AddButton_Click"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -18,23 +18,26 @@ public partial class ExamsControl_CRUD_ : UserControl
     public ExamsControl_CRUD_()
     {
         InitializeComponent();
-        LoadAllExams(); // Переименовал метод
+        LoadAllExams();
+
+        if (LoginVariableData.selectedUserInMainWindow.КодРоли == 3)
+        {
+            AddButton.IsVisible = false;
+        }
     }
 
-    // загружаем экзамены ВМЕСТЕ с навигационными свойствами
     private void LoadAllExams()
     {
         allExams = App.DbContext.Экзаменs
-            .Include(e => e.КодNavigation)           // Загружаем дисциплину
-            .Include(e => e.РегНомерNavigation)      // Загружаем сотрудника (для студента)
-            .ThenInclude(s => s.ТабНомерNavigation)  // Загружаем студента через сотрудника
-            .Include(e => e.ТабНомерNavigation)      // Загружаем преподавателя
+            .Include(e => e.КодNavigation)
+            .Include(e => e.РегНомерNavigation)
+            .ThenInclude(s => s.ТабНомерNavigation)
+            .Include(e => e.ТабНомерNavigation)
             .ToList();
 
         ExamControlDataGrid.ItemsSource = allExams;
     }
 
-    // Обработчик изменения текста в поле фильтра
     private void FilterTextBox_TextChanged_1(object? sender, TextChangedEventArgs e)
     {
         ApplyFilter();
@@ -68,7 +71,6 @@ public partial class ExamsControl_CRUD_ : UserControl
         var createAndChangeExam = new CreateAndChangeExam();
         await createAndChangeExam.ShowDialog(parent);
 
-        // Обновляем список после закрытия окна
         LoadAllExams();
     }
 

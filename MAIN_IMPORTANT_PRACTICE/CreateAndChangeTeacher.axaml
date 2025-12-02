@@ -12,7 +12,6 @@
                    HorizontalAlignment="Center" 
                    Margin="0 0 0 0"/>
 
-        <!-- Поле посередине -->
         <StackPanel Margin="0 0" HorizontalAlignment="Center">
             <TextBlock Text="ТабНомер:" 
                        HorizontalAlignment="Center" 
@@ -25,7 +24,6 @@
         </StackPanel>
 
         <Grid Margin="0 10" ColumnDefinitions="*,*" HorizontalAlignment="Center">
-            <!-- Первая колонка -->
             <StackPanel Grid.Column="0" Margin="0 0 20 0">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                     <TextBlock Grid.Row="0" 
@@ -76,7 +74,6 @@
                 </Grid>
             </StackPanel>
 
-            <!-- Вторая колонка -->
             <StackPanel Grid.Column="1" Margin="20 0 0 0">
                 <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                     <TextBlock Grid.Row="0" 

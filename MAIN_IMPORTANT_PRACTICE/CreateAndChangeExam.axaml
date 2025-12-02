@@ -15,7 +15,6 @@
         <TextBlock Text="😎Создание/Изменение Экзамена😎" FontSize="40" HorizontalAlignment="Center"/>
 
         <Grid Margin="35 30 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
-            <!-- Первая колонка -->
             <StackPanel Grid.Column="0" Margin="0 0 40 0" HorizontalAlignment="Center">
                 <Grid RowDefinitions="Auto, Auto, Auto, Auto">
                     <TextBlock Grid.Row="0" Text="Дисциплина:" HorizontalAlignment="Center"/>
@@ -48,7 +47,6 @@
                 </Grid>
             </StackPanel>
 
-            <!-- Вторая колонка -->
             <StackPanel Grid.Column="1" Margin="40 0 0 0" HorizontalAlignment="Center">
                 <Grid RowDefinitions="Auto, Auto, Auto, Auto">
                     <TextBlock Grid.Row="0" Text="Преподаватель:" HorizontalAlignment="Center"/>
@@ -77,9 +75,7 @@
             </StackPanel>
         </Grid>
 
-        <!-- Поля дата и оценка посередине -->
         <Grid Margin="35 0 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
-            <!-- Левая часть - Дата -->
             <StackPanel Grid.Column="0" Margin="0 0 20 0" HorizontalAlignment="Center">
                 <TextBlock Text="Дата:" HorizontalAlignment="Center"/>
                 <DatePicker x:Name="DatePickerControl"
@@ -89,7 +85,6 @@
                             HorizontalAlignment="Center"/>
             </StackPanel>
 
-            <!-- Правая часть - Оценка -->
             <StackPanel Grid.Column="1" Margin="63 0 0 0" HorizontalAlignment="Center">
                 <TextBlock Text="Оценка:" HorizontalAlignment="Center"/>
                 <ComboBox x:Name="GradeComboBox"

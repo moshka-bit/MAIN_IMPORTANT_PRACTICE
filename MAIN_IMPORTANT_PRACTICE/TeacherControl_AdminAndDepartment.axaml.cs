@@ -25,8 +25,6 @@ public partial class TeacherControl_AdminAndDepartment : UserControl
         allTeachers = App.DbContext.Сотрудникs.Where(s => s.КодРоли == 3).ToList();
         TeacherControlDataGrid.ItemsSource = allTeachers;
     }
-
-    // Обработчик изменения текста в поле фильтра
     private void FilterTextBox_TextChanged_1(object? sender, TextChangedEventArgs e)
     {
         ApplyFilter();

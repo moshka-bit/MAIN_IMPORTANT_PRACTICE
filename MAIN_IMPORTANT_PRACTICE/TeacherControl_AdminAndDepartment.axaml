@@ -5,15 +5,14 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MAIN_IMPORTANT_PRACTICE.TeacherControl_AdminAndDepartment">
 <Grid RowDefinitions="Auto,*,Auto">
-        <!-- Верхняя панель с поиском -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
             <TextBox x:Name="FilterTextBox" 
                      Width="200" 
                      TextChanged="FilterTextBox_TextChanged_1"
-                     Watermark="ФИО преподавателя"/>
+                     Watermark="ФИО преподавателя"
+                     MaxLength="50"/>
         </StackPanel>
 
-        <!-- Основная область с DataGrid -->
         <DataGrid Name="TeacherControlDataGrid" Grid.Row="1" IsReadOnly="True" DoubleTapped="TeacherControlDataGrid_DoubleTapped">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding ТабНомер}" Header="Таб.Номер"/>
@@ -27,7 +26,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Нижняя панель с кнопкой Добавить -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
             <Button x:Name="AddButton" 
                     Content="Добавить" 

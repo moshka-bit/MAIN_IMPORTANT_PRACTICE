@@ -10,4 +10,13 @@ public partial class StudentPage : Window
     {
         InitializeComponent();
     }
+
+    private void SwitchDisciplines_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        MainControl.Content = new SeeDisciplines();
+    }
+    private void SwitchExams_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        MainControl.Content = new SeeExams();
+    }
 }

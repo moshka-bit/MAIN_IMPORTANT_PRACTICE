@@ -25,8 +25,6 @@ public partial class StudentControl_CRUD_ : UserControl
         allStudents = App.DbContext.Сотрудникs.Where(s => s.КодРоли == 4).ToList();
         StudentControlDataGrid.ItemsSource = allStudents;
     }
-
-    // Обработчик изменения текста в поле фильтра
     private void FilterTextBox_TextChanged_1(object? sender, TextChangedEventArgs e)
     {
         ApplyFilter();

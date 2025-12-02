@@ -4,7 +4,6 @@ using Avalonia.Markup.Xaml;
 using MAIN_IMPORTANT_PRACTICE.Data;
 using MAIN_IMPORTANT_PRACTICE.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 
 namespace MAIN_IMPORTANT_PRACTICE;
@@ -15,151 +14,155 @@ public partial class CreateAndChangeStudent : Window
     {
         InitializeComponent();
 
+        SpecialityComboBox.ItemsSource = App.DbContext.РЎРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊs
+            .Include(s => s.РЁРёС„СЂNavigation)
+            .ToList();
+
         if (LoginVariableData.selectedStudentInMainWindow != null)
         {
-            DataContext = LoginVariableData.selectedStudentInMainWindow;
+            var loadedStudent = App.DbContext.РЎС‚СѓРґРµРЅС‚s
+                .Include(s => s.РќРѕРјРµСЂNavigation)
+                .Include(s => s.РЎРѕС‚СЂСѓРґРЅРёРє)
+                .FirstOrDefault(s => s.Р РµРіРќРѕРјРµСЂ == LoginVariableData.selectedStudentInMainWindow.Р РµРіРќРѕРјРµСЂ);
+
+            DataContext = loadedStudent ?? LoginVariableData.selectedStudentInMainWindow;
             RegNumberTextBox.IsReadOnly = true;
-            DeleteButton.IsVisible = true; // Показываем кнопку удаления
+            DeleteButton.IsVisible = true;
+
+            var currentStudent = DataContext as РЎС‚СѓРґРµРЅС‚;
+            if (currentStudent != null && !string.IsNullOrEmpty(currentStudent.РќРѕРјРµСЂ))
+            {
+                var speciality = App.DbContext.РЎРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊs
+                    .Include(s => s.РЁРёС„СЂNavigation)
+                    .FirstOrDefault(s => s.РќРѕРјРµСЂ == currentStudent.РќРѕРјРµСЂ);
+
+                if (speciality != null)
+                    SpecialityComboBox.SelectedItem = speciality;
+            }
         }
         else
         {
-            DataContext = new Студент();
+            DataContext = new РЎС‚СѓРґРµРЅС‚();
             RegNumberTextBox.IsReadOnly = false;
-            DeleteButton.IsVisible = false; // Скрываем кнопку удаления
+            DeleteButton.IsVisible = false;
         }
     }
 
     private void SaveButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        // ВАЛИДАЦИЯ ОБЯЗАТЕЛЬНЫХ ПОЛЕЙ
-        if (string.IsNullOrEmpty(RegNumberTextBox.Text) ||
-            string.IsNullOrEmpty(NumberTextBox.Text) ||
-            string.IsNullOrEmpty(LastNameTextBox.Text) ||
-            string.IsNullOrEmpty(LoginTextBox.Text) ||
-            string.IsNullOrEmpty(PasswordTextBox.Text))
-        {
-            // Просто выходим если не все заполнено
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(RegNumberTextBox.Text)) return;
 
-        // ПАРСИМ РЕГНомер
+        if (SpecialityComboBox.SelectedItem == null) return;
+
+        if (string.IsNullOrWhiteSpace(LastNameTextBox.Text)) return;
+
+        if (string.IsNullOrWhiteSpace(LoginTextBox.Text)) return;
+
+        if (string.IsNullOrWhiteSpace(PasswordTextBox.Text)) return;
+
         if (!int.TryParse(RegNumberTextBox.Text, out int regNumber)) return;
 
-        // Проверяем регномер на положительность
         if (regNumber <= 0) return;
 
-        var currentStudent = DataContext as Студент;
+
+        var currentStudent = DataContext as РЎС‚СѓРґРµРЅС‚;
         if (currentStudent == null) return;
 
-        try
+        var selectedSpeciality = SpecialityComboBox.SelectedItem as РЎРїРµС†РёР°Р»СЊРЅРѕСЃС‚СЊ;
+        if (selectedSpeciality == null) return;
+
+        using var transaction = App.DbContext.Database.BeginTransaction();
+
+        if (LoginVariableData.selectedStudentInMainWindow != null)
         {
-            using var transaction = App.DbContext.Database.BeginTransaction();
+            var student = App.DbContext.РЎС‚СѓРґРµРЅС‚s
+                .Include(s => s.РЎРѕС‚СЂСѓРґРЅРёРє)
+                .Include(s => s.РќРѕРјРµСЂNavigation)
+                .FirstOrDefault(s => s.Р РµРіРќРѕРјРµСЂ == regNumber);
 
-            if (LoginVariableData.selectedStudentInMainWindow != null)
+            if (student == null) return;
+
+            student.РќРѕРјРµСЂ = selectedSpeciality.РќРѕРјРµСЂ;
+            student.РќРѕРјРµСЂNavigation = selectedSpeciality;
+
+
+            if (student.РЎРѕС‚СЂСѓРґРЅРёРє == null)
             {
-                // РЕДАКТИРОВАНИЕ СУЩЕСТВУЮЩЕГО СТУДЕНТА
-
-                // Получаем студента из БД с включенным сотрудником
-                var student = App.DbContext.Студентs
-                    .Include(s => s.Сотрудник)
-                    .Include(s => s.НомерNavigation)
-                    .FirstOrDefault(s => s.РегНомер == regNumber);
-
-                if (student == null) return;
-
-                // Обновляем данные студента
-                student.Номер = NumberTextBox.Text.Trim();
-
-                // Обновляем или создаем связанного сотрудника
-                if (student.Сотрудник == null)
+                var employee = new РЎРѕС‚СЂСѓРґРЅРёРє
                 {
-                    // Создаем нового сотрудника
-                    var employee = new Сотрудник
-                    {
-                        ТабНомер = regNumber,
-                        Фамилия = LastNameTextBox.Text.Trim(),
-                        Логин = LoginTextBox.Text.Trim(),
-                        Пароль = PasswordTextBox.Text.Trim(),
-                        КодРоли = 4 // Предположим, что 4 - код роли студента (проверьте в таблице Роли)
-                    };
-                    student.Сотрудник = employee;
-                }
-                else
-                {
-                    // Обновляем существующего сотрудника
-                    student.Сотрудник.Фамилия = LastNameTextBox.Text.Trim();
-                    student.Сотрудник.Логин = LoginTextBox.Text.Trim();
-                    student.Сотрудник.Пароль = PasswordTextBox.Text.Trim();
-                    student.Сотрудник.КодРоли = 4; // Код роли студента
-                }
+                    РўР°Р±РќРѕРјРµСЂ = regNumber,
+                    Р¤Р°РјРёР»РёСЏ = LastNameTextBox.Text.Trim(),
+                    Р›РѕРіРёРЅ = LoginTextBox.Text.Trim(),
+                    РџР°СЂРѕР»СЊ = PasswordTextBox.Text.Trim(),
+                    РљРѕРґР РѕР»Рё = 4, // СЃС‚СѓРґРµРЅС‚
+                    РќРѕРјРµСЂ = selectedSpeciality.РќРѕРјРµСЂ
+                };
+                student.РЎРѕС‚СЂСѓРґРЅРёРє = employee;
             }
             else
             {
-                // СОЗДАНИЕ НОВОГО СТУДЕНТА
-
-                // Проверяем, не существует ли уже студента с таким регномером
-                if (App.DbContext.Студентs.Any(s => s.РегНомер == regNumber))
-                {
-                    return;
-                }
-
-                // Проверяем, существует ли сотрудник с таким табномером (чтобы избежать конфликта)
-                if (App.DbContext.Сотрудникs.Any(s => s.ТабНомер == regNumber))
-                {
-                    // Сотрудник с таким табномером уже существует
-                    return;
-                }
-
-                // Проверяем, существует ли специальность с указанным номером
-                var speciality = App.DbContext.Специальностьs
-                    .FirstOrDefault(s => s.Номер == NumberTextBox.Text.Trim());
-
-                if (speciality == null)
-                {
-                    // Специальность не существует
-                    return;
-                }
-
-                // СОЗДАЕМ СНАЧАЛА СОТРУДНИКА
-                var employee = new Сотрудник
-                {
-                    ТабНомер = regNumber,
-                    Фамилия = LastNameTextBox.Text.Trim(),
-                    Логин = LoginTextBox.Text.Trim(),
-                    Пароль = PasswordTextBox.Text.Trim(),
-                    КодРоли = 4 // Код роли студента
-                };
-
-                // Добавляем сотрудника
-                App.DbContext.Сотрудникs.Add(employee);
-                App.DbContext.SaveChanges(); // Сохраняем чтобы получить ID
-
-                // ТЕПЕРЬ СОЗДАЕМ СТУДЕНТА
-                var student = new Студент
-                {
-                    РегНомер = regNumber,
-                    Номер = NumberTextBox.Text.Trim(),
-                    Сотрудник = employee
-                };
-
-                App.DbContext.Студентs.Add(student);
+                student.РЎРѕС‚СЂСѓРґРЅРёРє.Р¤Р°РјРёР»РёСЏ = LastNameTextBox.Text.Trim();
+                student.РЎРѕС‚СЂСѓРґРЅРёРє.Р›РѕРіРёРЅ = LoginTextBox.Text.Trim();
+                student.РЎРѕС‚СЂСѓРґРЅРёРє.РџР°СЂРѕР»СЊ = PasswordTextBox.Text.Trim();
+                student.РЎРѕС‚СЂСѓРґРЅРёРє.РљРѕРґР РѕР»Рё = 4; // СЃС‚СѓРґРµРЅС‚
+                student.РЎРѕС‚СЂСѓРґРЅРёРє.РќРѕРјРµСЂ = selectedSpeciality.РќРѕРјРµСЂ;
             }
+        }
+        else
+        {
+
+            if (App.DbContext.РЎС‚СѓРґРµРЅС‚s.Any(s => s.Р РµРіРќРѕРјРµСЂ == regNumber)) return;
+
+            if (App.DbContext.РЎРѕС‚СЂСѓРґРЅРёРєs.Any(s => s.РўР°Р±РќРѕРјРµСЂ == regNumber)) return;
+
+            var student = new РЎС‚СѓРґРµРЅС‚
+            {
+                Р РµРіРќРѕРјРµСЂ = regNumber,
+                РќРѕРјРµСЂ = selectedSpeciality.РќРѕРјРµСЂ,
+                РќРѕРјРµСЂNavigation = selectedSpeciality
+            };
+
+            var employee = new РЎРѕС‚СЂСѓРґРЅРёРє
+            {
+                РўР°Р±РќРѕРјРµСЂ = regNumber,
+                Р¤Р°РјРёР»РёСЏ = LastNameTextBox.Text.Trim(),
+                Р›РѕРіРёРЅ = LoginTextBox.Text.Trim(),
+                РџР°СЂРѕР»СЊ = PasswordTextBox.Text.Trim(),
+                РљРѕРґР РѕР»Рё = 4, // СЃС‚СѓРґРµРЅС‚
+                РќРѕРјРµСЂ = selectedSpeciality.РќРѕРјРµСЂ,
+                РўР°Р±РќРѕРјРµСЂNavigation = student
+            };
+
+            student.РЎРѕС‚СЂСѓРґРЅРёРє = employee;
+
+            App.DbContext.РЎС‚СѓРґРµРЅС‚s.Add(student);
+        }
+
+        App.DbContext.SaveChanges();
+        transaction.Commit();
+
+        this.Close();
+    }
+
+    private void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (!int.TryParse(RegNumberTextBox.Text, out int regNumber) || regNumber <= 0) return;
+
+        if (LoginVariableData.selectedStudentInMainWindow == null) return;
+
+        var student = App.DbContext.РЎС‚СѓРґРµРЅС‚s
+                .Include(s => s.РЎРѕС‚СЂСѓРґРЅРёРє)
+                .FirstOrDefault(s => s.Р РµРіРќРѕРјРµСЂ == regNumber);
+
+        if (student == null) return;
+
+        if (student.РЎРѕС‚СЂСѓРґРЅРёРє != null)
+        {
+            App.DbContext.РЎРѕС‚СЂСѓРґРЅРёРєs.Remove(student.РЎРѕС‚СЂСѓРґРЅРёРє);
+        }
+            App.DbContext.РЎС‚СѓРґРµРЅС‚s.Remove(student);
 
             App.DbContext.SaveChanges();
-            transaction.Commit();
             this.Close();
-        }
-        catch (DbUpdateException ex)
-        {
-            Console.WriteLine($"Ошибка сохранения студента: {ex.Message}");
-            if (ex.InnerException != null)
-            {
-                Console.WriteLine($"Внутренняя ошибка: {ex.InnerException.Message}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Общая ошибка: {ex.Message}");
-        }
     }
 }

@@ -18,135 +18,120 @@ public partial class CreateAndChangeExam : Window
 
         if (LoginVariableData.selectedExamInMainWindow != null)
         {
-            DataContext = LoginVariableData.selectedExamInMainWindow;
+            var loadedExam = App.DbContext.Р­РєР·Р°РјРµРЅs
+                .Include(e => e.РљРѕРґNavigation)
+                .Include(e => e.Р РµРіРќРѕРјРµСЂNavigation)
+                .Include(e => e.РўР°Р±РќРѕРјРµСЂNavigation)
+                .FirstOrDefault(e => e.РљРѕРґР­РєР·Р°РјРµРЅР° == LoginVariableData.selectedExamInMainWindow.РљРѕРґР­РєР·Р°РјРµРЅР°);
+
+            DataContext = loadedExam ?? LoginVariableData.selectedExamInMainWindow;
         }
         else
         {
-            // Создаем новый экзамен с текущей датой по умолчанию
-            var newExam = new Экзамен
+            var newExam = new Р­РєР·Р°РјРµРЅ
             {
-                Дата = DateOnly.FromDateTime(DateTime.Today)
+                Р”Р°С‚Р° = DateOnly.FromDateTime(System.DateTime.Today)
             };
             DataContext = newExam;
         }
 
-        CodeComboBox.ItemsSource = App.DbContext.Дисциплинаs.ToList();
-        RegNumberComboBox.ItemsSource = App.DbContext.Сотрудникs.Where(s => s.КодРоли == 4).ToList();
-        TabNumberComboBox.ItemsSource = App.DbContext.Сотрудникs.Where(s => s.КодРоли == 3 || s.КодРоли == 2).ToList();
+        CodeComboBox.ItemsSource = App.DbContext.Р”РёСЃС†РёРїР»РёРЅР°s.ToList();
+        RegNumberComboBox.ItemsSource = App.DbContext.РЎРѕС‚СЂСѓРґРЅРёРєs.Where(s => s.РљРѕРґР РѕР»Рё == 4).ToList();
+        TabNumberComboBox.ItemsSource = App.DbContext.РЎРѕС‚СЂСѓРґРЅРёРєs.Where(s => s.РљРѕРґР РѕР»Рё == 3 || s.РљРѕРґР РѕР»Рё == 2).ToList();
         GradeComboBox.ItemsSource = new List<int> { 2, 3, 4, 5 };
+
+        var currentUser = LoginVariableData.selectedUserInMainWindow;
+        if (currentUser != null && currentUser.РљРѕРґР РѕР»Рё == 3)
+        {
+            CodeComboBox.IsEnabled = false;
+            RegNumberComboBox.IsEnabled = false;
+            TabNumberComboBox.IsEnabled = false;
+            AudienceTextBox.IsReadOnly = true;
+            DatePickerControl.IsEnabled = false;
+        }
     }
 
     private void SaveButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        // Проверяем, что все обязательные поля заполнены
-        if (string.IsNullOrEmpty(AudienceTextBox.Text) ||
+        var currentUser = LoginVariableData.selectedUserInMainWindow;
+        var currentExam = DataContext as Р­РєР·Р°РјРµРЅ;
+        if (currentExam == null) return;
+
+        if (GradeComboBox.SelectedItem is not int grade) return;
+
+        if (currentUser != null && currentUser.РљРѕРґР РѕР»Рё == 3)
+        {
+            currentExam.РћС†РµРЅРєР° = grade;
+            App.DbContext.Update(currentExam);
+            App.DbContext.SaveChanges();
+            this.Close();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(AudienceTextBox.Text) ||
             CodeComboBox.SelectedItem == null ||
             RegNumberComboBox.SelectedItem == null ||
             TabNumberComboBox.SelectedItem == null ||
-            GradeComboBox.SelectedItem == null ||
-            DatePickerControl.SelectedDate == null)
-        {
-            // Можно показать сообщение об ошибке
-            return;
-        }
+            DatePickerControl.SelectedDate == null) return;
 
-        // Получаем дату из DatePicker - конвертер уже преобразовал ее в DateOnly
-        var currentExam = DataContext as Экзамен;
-        if (currentExam == null || currentExam.Дата == DateOnly.MinValue)
-        {
-            return;
-        }
+        if (currentExam.Р”Р°С‚Р° == DateOnly.MinValue) return;
 
-        DateOnly date = currentExam.Дата;
+        DateOnly date = currentExam.Р”Р°С‚Р°;
+        if (date.Year < 2000 || date.Year > 2100) return;
 
-        // Проверка диапазона дат (опционально)
-        if (date.Year < 2000 || date.Year > 2100)
-        {
-            // Можно показать сообщение об ошибке
-            return;
-        }
+        var selectedDiscipline = CodeComboBox.SelectedItem as Р”РёСЃС†РёРїР»РёРЅР°;
+        var selectedStudent = RegNumberComboBox.SelectedItem as РЎРѕС‚СЂСѓРґРЅРёРє;
+        var selectedTeacher = TabNumberComboBox.SelectedItem as РЎРѕС‚СЂСѓРґРЅРёРє;
 
-        var selectedDiscipline = CodeComboBox.SelectedItem as Дисциплина;
-        var selectedStudent = RegNumberComboBox.SelectedItem as Сотрудник;
-        var selectedTeacher = TabNumberComboBox.SelectedItem as Сотрудник;
+        if (selectedDiscipline == null || selectedStudent == null || selectedTeacher == null) return;
 
-        if (selectedDiscipline == null || selectedStudent == null || selectedTeacher == null)
-            return;
+        int code = selectedDiscipline.РљРѕРґ;
+        int regNumber = selectedStudent.РўР°Р±РќРѕРјРµСЂ;
+        int tabNumber = selectedTeacher.РўР°Р±РќРѕРјРµСЂ;
 
-        // Получаем значения ключевых полей
-        int code = selectedDiscipline.Код;
-        int regNumber = selectedStudent.ТабНомер;
-        int tabNumber = selectedTeacher.ТабНомер;
-
-        // ПРОВЕРКА НА УНИКАЛЬНОСТЬ КОМБИНАЦИИ ПОЛЕЙ (Код, РегНомер, ТабНомер)
         if (LoginVariableData.selectedExamInMainWindow != null)
         {
-            // Редактирование существующего экзамена
+            var currentCode = currentExam.РљРѕРґ;
+            var currentRegNumber = currentExam.Р РµРіРќРѕРјРµСЂ;
+            var currentTabNumber = currentExam.РўР°Р±РќРѕРјРµСЂ;
 
-            // Получаем текущие значения ключевых полей
-            var currentCode = currentExam.Код;
-            var currentRegNumber = currentExam.РегНомер;
-            var currentTabNumber = currentExam.ТабНомер;
-
-            // Проверяем, изменились ли ключевые поля
             bool keyFieldsChanged = currentCode != code ||
                                    currentRegNumber != regNumber ||
                                    currentTabNumber != tabNumber;
 
             if (keyFieldsChanged)
             {
-                // Проверяем, не существует ли уже экзамена с новой комбинацией ключевых полей
-                var existingExam = App.DbContext.Экзаменs
-                    .FirstOrDefault(e => e.Код == code &&
-                                        e.РегНомер == regNumber &&
-                                        e.ТабНомер == tabNumber);
+                var existingExam = App.DbContext.Р­РєР·Р°РјРµРЅs
+                    .FirstOrDefault(e => e.РљРѕРґ == code &&
+                                         e.Р РµРіРќРѕРјРµСЂ == regNumber &&
+                                         e.РўР°Р±РќРѕРјРµСЂ == tabNumber);
 
-                if (existingExam != null)
-                {
-                    // Такой экзамен уже существует
-                    // Можно добавить MessageBox с сообщением об ошибке
-                    return;
-                }
+                if (existingExam != null) return;
             }
         }
         else
         {
-            // Создание нового экзамена
+            var existingExam = App.DbContext.Р­РєР·Р°РјРµРЅs
+                .FirstOrDefault(e => e.РљРѕРґ == code &&
+                                     e.Р РµРіРќРѕРјРµСЂ == regNumber &&
+                                     e.РўР°Р±РќРѕРјРµСЂ == tabNumber);
 
-            // Проверяем, не существует ли уже экзамена с такой комбинацией ключевых полей
-            var existingExam = App.DbContext.Экзаменs
-                .FirstOrDefault(e => e.Код == code &&
-                                    e.РегНомер == regNumber &&
-                                    e.ТабНомер == tabNumber);
-
-            if (existingExam != null)
-            {
-                // Такой экзамен уже существует
-                // Можно добавить MessageBox с сообщением об ошибке
-                return;
-            }
+            if (existingExam != null) return;
         }
 
-        // Обновляем значения ключевых полей
-        currentExam.Код = code;
-        currentExam.РегНомер = regNumber;
-        currentExam.ТабНомер = tabNumber;
+        currentExam.РљРѕРґ = code;
+        currentExam.Р РµРіРќРѕРјРµСЂ = regNumber;
+        currentExam.РўР°Р±РќРѕРјРµСЂ = tabNumber;
 
-        // Обновляем остальные поля
-        currentExam.Дата = date;
-        currentExam.КодNavigation = selectedDiscipline;
-        currentExam.РегНомерNavigation = selectedStudent;
-        currentExam.ТабНомерNavigation = selectedTeacher;
-        currentExam.Аудитория = AudienceTextBox.Text;
-
-        if (GradeComboBox.SelectedItem is int grade)
-        {
-            currentExam.Оценка = grade;
-        }
+        currentExam.Р”Р°С‚Р° = date;
+        currentExam.РљРѕРґNavigation = selectedDiscipline;
+        currentExam.Р РµРіРќРѕРјРµСЂNavigation = selectedStudent;
+        currentExam.РўР°Р±РќРѕРјРµСЂNavigation = selectedTeacher;
+        currentExam.РђСѓРґРёС‚РѕСЂРёСЏ = AudienceTextBox.Text.Trim();
+        currentExam.РћС†РµРЅРєР° = grade;
 
         if (LoginVariableData.selectedExamInMainWindow != null)
         {
-            // Теперь можно использовать Update, так как есть PK
             App.DbContext.Update(currentExam);
         }
         else
@@ -160,24 +145,22 @@ public partial class CreateAndChangeExam : Window
 
     private void DeleteButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        // Проверяем, что мы редактируем существующий экзамен
         if (LoginVariableData.selectedExamInMainWindow == null) return;
 
-        var currentExam = DataContext as Экзамен;
+        var currentExam = DataContext as Р­РєР·Р°РјРµРЅ;
         if (currentExam == null) return;
 
-        // Получаем ключевые поля для поиска в БД
-        int code = currentExam.Код;
-        int regNumber = currentExam.РегНомер;
-        int tabNumber = currentExam.ТабНомер;
+        int code = currentExam.РљРѕРґ;
+        int regNumber = currentExam.Р РµРіРќРѕРјРµСЂ;
+        int tabNumber = currentExam.РўР°Р±РќРѕРјРµСЂ;
 
-        // Находим экзамен в базе данных
-        var examToDelete = App.DbContext.Экзаменs.FirstOrDefault(e => e.Код == code && e.РегНомер == regNumber && e.ТабНомер == tabNumber);
+        var examToDelete = App.DbContext.Р­РєР·Р°РјРµРЅs
+            .FirstOrDefault(e => e.РљРѕРґ == code &&
+                                 e.Р РµРіРќРѕРјРµСЂ == regNumber &&
+                                 e.РўР°Р±РќРѕРјРµСЂ == tabNumber);
 
         if (examToDelete == null) return;
-
-        // Удаляем экзамен
-        App.DbContext.Экзаменs.Remove(examToDelete);
+        App.DbContext.Р­РєР·Р°РјРµРЅs.Remove(examToDelete);
         App.DbContext.SaveChanges();
 
         this.Close();
