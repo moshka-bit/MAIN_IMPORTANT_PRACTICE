@@ -1,0 +1,52 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MAIN_IMPORTANT_PRACTICE.CreateAndChangeDiscipline"
+        Title="CreateAndChangeDiscipline">
+
+<StackPanel Margin="0 0 0 0">
+	<TextBlock Text="😎Создание/Изменение дисциплины😎" FontSize="40" HorizontalAlignment="Center"/>
+
+	<Grid Margin="35 30 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
+		<!-- Первая колонка -->
+		<StackPanel Grid.Column="0" Margin="0 0 40 0" HorizontalAlignment="Center">
+			<Grid RowDefinitions="Auto, Auto, Auto, Auto">
+				<TextBlock Grid.Row="0" Text="Код:" HorizontalAlignment="Center"/>
+				<TextBox x:Name="CodeTextBox" 
+						 Text="{Binding Код}" 
+						 Grid.Row="1" 
+						 Width="300" 
+						 Margin="0 5 0 20" 
+						 HorizontalAlignment="Center"
+						 MaxLength="8"/>
+				<TextBlock Grid.Row="2" Text="Объем:" HorizontalAlignment="Center"/>
+				<TextBox x:Name="VolumeTextBox" Text="{Binding Объем}" Grid.Row="3" Width="300" Margin="0 5 0 20" HorizontalAlignment="Center" MaxLength="4"/>
+			</Grid>
+		</StackPanel>
+
+		<!-- Вторая колонка -->
+		<StackPanel Grid.Column="1" Margin="40 0 0 0" HorizontalAlignment="Center">
+			<Grid RowDefinitions="Auto, Auto, Auto, Auto">
+				<TextBlock Grid.Row="0" Text="Название:" HorizontalAlignment="Center"/>
+				<TextBox x:Name="NameTextBox" Text="{Binding Название}" Grid.Row="1" Width="300" Margin="0 5 0 20" HorizontalAlignment="Center" MaxLength="100"/>
+
+				<TextBlock Grid.Row="2" Text="Исполнитель:" HorizontalAlignment="Center"/>
+					<ComboBox x:Name="KafedraComboBox" Grid.Row="7" Width="300" Margin="0 0 0 10" HorizontalAlignment="Left" SelectedItem="{Binding ИсполнительNavigation}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock FontWeight="Bold" Text="{Binding Шифр}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+					</ComboBox>
+			</Grid>
+		</StackPanel>
+	</Grid>
+
+	<StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
+		<Button x:Name="DeleteButton" Margin="0 0 30 0" Content="Удалить" FontSize="30" Width="140" Click="DeleteButton_Click"/>
+		<Button x:Name="SaveButton" Content="Сохранить" FontSize="30" Width="180" Click="SaveButton_Click"/>
+	</StackPanel>
+</StackPanel>
+</Window>

@@ -1,0 +1,108 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MAIN_IMPORTANT_PRACTICE"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MAIN_IMPORTANT_PRACTICE.CreateAndChangeExam"
+        Title="CreateAndChangeExam">
+    
+    <Window.Resources>
+        <local:DateOnlyToDateTimeOffsetConverter x:Key="DateConverter"/>
+    </Window.Resources>
+    
+    <StackPanel Margin="0 0 0 0">
+        <TextBlock Text="😎Создание/Изменение Экзамена😎" FontSize="40" HorizontalAlignment="Center"/>
+
+        <Grid Margin="35 30 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
+            <!-- Первая колонка -->
+            <StackPanel Grid.Column="0" Margin="0 0 40 0" HorizontalAlignment="Center">
+                <Grid RowDefinitions="Auto, Auto, Auto, Auto">
+                    <TextBlock Grid.Row="0" Text="Дисциплина:" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="CodeComboBox" 
+                              Grid.Row="1" 
+                              Width="300" 
+                              Margin="0 5 0 20" 
+                              HorizontalAlignment="Center"
+                              SelectedItem="{Binding КодNavigation}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" Text="{Binding Название}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBlock Grid.Row="2" Text="Студент:" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="RegNumberComboBox" 
+                              Grid.Row="3" 
+                              Width="300" 
+                              Margin="0 5 0 20" 
+                              HorizontalAlignment="Center"
+                              SelectedItem="{Binding РегНомерNavigation}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" Text="{Binding Фамилия}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+            </StackPanel>
+
+            <!-- Вторая колонка -->
+            <StackPanel Grid.Column="1" Margin="40 0 0 0" HorizontalAlignment="Center">
+                <Grid RowDefinitions="Auto, Auto, Auto, Auto">
+                    <TextBlock Grid.Row="0" Text="Преподаватель:" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="TabNumberComboBox"
+                              Grid.Row="1" 
+                              Width="300" 
+                              Margin="0 5 0 20" 
+                              HorizontalAlignment="Center"
+                              SelectedItem="{Binding ТабНомерNavigation}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" Text="{Binding Фамилия}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBlock Grid.Row="2" Text="Аудитория:" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="AudienceTextBox" 
+                             Text="{Binding Аудитория}" 
+                             Grid.Row="3" 
+                             Width="300" 
+                             Margin="0 5 0 20" 
+                             HorizontalAlignment="Center"
+                             MaxLength="5"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+        <!-- Поля дата и оценка посередине -->
+        <Grid Margin="35 0 35 0" ColumnDefinitions="*,*" HorizontalAlignment="Center">
+            <!-- Левая часть - Дата -->
+            <StackPanel Grid.Column="0" Margin="0 0 20 0" HorizontalAlignment="Center">
+                <TextBlock Text="Дата:" HorizontalAlignment="Center"/>
+                <DatePicker x:Name="DatePickerControl"
+                            SelectedDate="{Binding Дата, Mode=TwoWay, Converter={StaticResource DateConverter}}"
+                            Width="300" 
+                            Margin="0 5 0 0" 
+                            HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Правая часть - Оценка -->
+            <StackPanel Grid.Column="1" Margin="63 0 0 0" HorizontalAlignment="Center">
+                <TextBlock Text="Оценка:" HorizontalAlignment="Center"/>
+                <ComboBox x:Name="GradeComboBox"
+                          Width="300"
+                          HorizontalAlignment="Center"
+                          SelectedItem="{Binding Оценка}"
+                          Margin="0 5 0 15"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Margin="0 30 0 0" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button x:Name="DeleteButton" Margin="0 0 30 0" Content="Удалить" FontSize="30" Width="140" Click="DeleteButton_Click"/>
+            <Button x:Name="SaveButton" Content="Сохранить" FontSize="30" Width="180" Click="SaveButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

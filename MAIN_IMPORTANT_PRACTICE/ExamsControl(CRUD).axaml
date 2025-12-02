@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MAIN_IMPORTANT_PRACTICE.ExamsControl_CRUD_">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Верхняя панель с поиском -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <TextBox x:Name="FilterTextBox" 
+                     Width="200"
+                     TextChanged="FilterTextBox_TextChanged_1"
+                     Watermark="Оценка"/>
+        </StackPanel>
+
+        <!-- Основная область с DataGrid -->
+        <DataGrid Name="ExamControlDataGrid" Grid.Row="1" IsReadOnly="True" DoubleTapped="ExamControlDataGrid_DoubleTapped">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Дата}" Header="Дата"/>
+                <DataGridTextColumn Binding="{Binding КодNavigation.Название}" Header="Дисциплина"/>
+                <DataGridTextColumn Binding="{Binding РегНомерNavigation.Фамилия}" Header="Студент"/>
+                <DataGridTextColumn Binding="{Binding ТабНомерNavigation.Фамилия}" Header="Преподаватель"/>
+                <DataGridTextColumn Binding="{Binding Аудитория}" Header="Аудитория"/>
+                <DataGridTextColumn Binding="{Binding Оценка}" Header="Оценка"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Нижняя панель с кнопкой Добавить -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <Button x:Name="AddButton" 
+                    Content="Добавить" 
+                    Width="83" 
+                    Height="30"
+                    Click="AddButton_Click"/>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

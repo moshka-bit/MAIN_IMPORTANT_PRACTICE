@@ -1,0 +1,151 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MAIN_IMPORTANT_PRACTICE.CreateAndChangeTeacher"
+        Title="CreateAndChangeTeacher">
+
+    <StackPanel Margin="20">
+        <TextBlock Text="😎 Создание/Изменение Преподавателя 😎" 
+                   FontSize="35" 
+                   HorizontalAlignment="Center" 
+                   Margin="0 0 0 0"/>
+
+        <!-- Поле посередине -->
+        <StackPanel Margin="0 0" HorizontalAlignment="Center">
+            <TextBlock Text="ТабНомер:" 
+                       HorizontalAlignment="Center" 
+                       Margin="0 0 0 0"/>
+            <TextBox x:Name="TabNumberTextBox" 
+                     Text="{Binding ТабНомер}" 
+                     Width="300" 
+                     HorizontalAlignment="Center"
+                     MaxLength="8"/>
+        </StackPanel>
+
+        <Grid Margin="0 10" ColumnDefinitions="*,*" HorizontalAlignment="Center">
+            <!-- Первая колонка -->
+            <StackPanel Grid.Column="0" Margin="0 0 20 0">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" 
+                               Text="Шифр:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <ComboBox x:Name="KafedraComboBox" 
+                              Grid.Row="1" 
+                              Width="300" 
+                              HorizontalAlignment="Center" 
+                              SelectedItem="{Binding ТабНомерNavigation.ШифрNavigation}"   
+                              Margin="0 0 0 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" Text="{Binding Шифр}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBlock Grid.Row="2" 
+                               Text="Зарплата:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <TextBox x:Name="SalaryTextBox" 
+                             Text="{Binding ТабНомерNavigation.Зарплата}" 
+                             Grid.Row="3" 
+                             Width="300" 
+                             HorizontalAlignment="Center"
+                             Margin="0 0 0 10"
+                             MaxLength="6"/>
+                    
+                    <TextBlock Grid.Row="4" 
+                               Text="Звание:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                   <TextBox x:Name="TitleTextBox" Text="{Binding Звание}" Grid.Row="5" Width="300" Margin="0 0 0 10" HorizontalAlignment="Center" MaxLength="20"/>
+                    
+                    <TextBlock Grid.Row="6" 
+                               Text="Пароль:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <TextBox x:Name="PasswordTextBox" 
+                             Text="{Binding ТабНомерNavigation.Пароль}" 
+                             Grid.Row="7" 
+                             Width="300" 
+                             HorizontalAlignment="Center"
+                             MaxLength="50"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Вторая колонка -->
+            <StackPanel Grid.Column="1" Margin="20 0 0 0">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                    <TextBlock Grid.Row="0" 
+                               Text="Фамилия:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <TextBox x:Name="LastNameTextBox" 
+                             Text="{Binding ТабНомерNavigation.Фамилия}" 
+                             Grid.Row="1" 
+                             Width="300" 
+                             HorizontalAlignment="Center"
+                             Margin="0 0 0 10"
+                             MaxLength="50"/>
+                    
+                    <TextBlock Grid.Row="2" 
+                               Text="Шеф:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <ComboBox x:Name="ChiefComboBox" 
+                              Grid.Row="3" 
+                              Width="300" 
+                              HorizontalAlignment="Center" 
+                              SelectedItem="{Binding ТабНомерNavigation.ШефNavigation}"
+                              Margin="0 0 0 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontWeight="Bold" Text="{Binding Фамилия}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    
+                    <TextBlock Grid.Row="4" 
+                               Text="Степень:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <TextBox x:Name="DegreeTextBox" 
+                             Text="{Binding Степень}" 
+                             Grid.Row="5" 
+                             Width="300" 
+                             HorizontalAlignment="Center"
+                             Margin="0 0 0 10"
+                             MaxLength="20"/>
+                    
+                    <TextBlock Grid.Row="6" 
+                               Text="Логин:" 
+                               HorizontalAlignment="Center" 
+                               Margin="0 0 0 0"/>
+                    <TextBox x:Name="LoginTextBox" 
+                             Text="{Binding ТабНомерNavigation.Логин}" 
+                             Grid.Row="7" 
+                             Width="300" 
+                             HorizontalAlignment="Center"
+                             MaxLength="50"/>
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Margin="0 30" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button x:Name="DeleteButton" 
+                    Margin="0 0 20 0" 
+                    Content="Удалить" 
+                    FontSize="30" 
+                    Width="140"
+                    Click="DeleteButton_Click"/>
+            <Button x:Name="SaveButton" 
+                    Content="Сохранить" 
+                    FontSize="30" 
+                    Width="180"
+                    Click="SaveButton_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

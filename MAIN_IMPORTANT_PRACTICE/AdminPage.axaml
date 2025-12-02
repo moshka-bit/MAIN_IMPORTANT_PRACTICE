@@ -1,0 +1,31 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MAIN_IMPORTANT_PRACTICE.AdminPage"
+        Title="AdminPage">
+  <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Text="😎Hey, Admin😎"
+                   Grid.Row="0"
+                   FontSize="30"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Margin="0 20 0 10"/>
+
+		<Grid Grid.Row="1" RowDefinitions="Auto, *">
+			<StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" Margin="0 0 0 20">
+				<Button Content="Дисциплины" Name="SwitchDisciplines" Click="SwitchDisciplines_Click"/>
+				<Button Content="Преподаватели" Name="SwitchTeachers" Click="SwitchTeachers_Click"/>
+				<Button Content="Экзамены" Name="SwitchExams" Click="SwitchExams_Click"/>
+				<Button Content="Студенты" Name="SwitchStudents" Click="SwitchStudents_Click"/>
+			</StackPanel>
+			<UserControl Name="MainControl" Grid.Row="1"/>
+		</Grid>
+	</Grid>
+</Window>

@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MAIN_IMPORTANT_PRACTICE.DisciplinesControl_AdminAndDepartment">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Верхняя панель с поиском -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <TextBox x:Name="FilterTextBox" 
+                     Width="200" 
+                     TextChanged="FilterTextBox_TextChanged_1"
+                     Watermark="Название дисциплины"/>
+        </StackPanel>
+
+        <!-- Основная область с DataGrid -->
+        <DataGrid Name="DisciplineControlDataGrid" Grid.Row="1" IsReadOnly="True" DoubleTapped="DisciplineControlDataGrid_DoubleTapped">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Код}" Header="Код"/>
+                <DataGridTextColumn Binding="{Binding Объем}" Header="Объём"/>
+                <DataGridTextColumn Binding="{Binding Название}" Header="Название"/>
+                <DataGridTextColumn Binding="{Binding Исполнитель}" Header="Исполнитель"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Нижняя панель с кнопкой Добавить -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <Button x:Name="AddButton" 
+                    Content="Добавить" 
+                    Width="83" 
+                    Height="30" Click="AddButton_Click"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
